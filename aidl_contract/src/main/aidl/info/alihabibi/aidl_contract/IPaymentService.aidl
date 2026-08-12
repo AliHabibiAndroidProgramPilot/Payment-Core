@@ -1,6 +1,8 @@
 package info.alihabibi.aidl_contract;
 
-import info.alihabibi.aidl_contract.model.PaymentRequest;
+import info.alihabibi.aidl_contract.IPaymentCallback;
+import info.alihabibi.aidl_contract.PaymentRequest;
+import info.alihabibi.aidl_contract.PaymentResult;
 
 interface IPaymentService {
 

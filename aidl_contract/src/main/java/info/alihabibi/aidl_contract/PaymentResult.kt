@@ -1,7 +1,6 @@
-package info.alihabibi.aidl_contract.model
+package info.alihabibi.aidl_contract
 
 import android.os.Parcelable
-import info.alihabibi.aidl_contract.ResultStatus
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

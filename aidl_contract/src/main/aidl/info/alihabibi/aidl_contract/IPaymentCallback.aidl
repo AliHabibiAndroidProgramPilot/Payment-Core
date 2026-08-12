@@ -1,6 +1,6 @@
 package info.alihabibi.aidl_contract;
 
-import info.alihabibi.aidl_contract.model.PaymentResult;
+import info.alihabibi.aidl_contract.PaymentResult;
 
 oneway interface IPaymentCallback {
 
