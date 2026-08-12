@@ -5,13 +5,13 @@ plugins {
 }
 
 android {
-    namespace = "info.alihabibi.payment_core"
+    namespace = "info.alihabibi.merchant"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "info.alihabibi.payment_core"
+        applicationId = "info.alihabibi.merchant"
         minSdk = 29
         targetSdk = 36
         versionCode = 1
