@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 rootProject.name = "Payment-Core"
 include(":app")
 include(":merchant")
+include(":aidl_contract")
