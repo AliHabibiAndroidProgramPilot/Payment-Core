@@ -2,7 +2,7 @@ package info.alihabibi.aidl_contract;
 
 import info.alihabibi.aidl_contract.model.PaymentResult;
 
-interface IPaymentCallback {
+oneway interface IPaymentCallback {
 
     void onTransactionStarted(String requestId);
 

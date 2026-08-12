@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class PaymentResult(
     val requestId: String,
-    val status: ResultStatus,
+    val status: String,
     val responseCode: String?,
     val rrn: String?,
     val message: String?,
