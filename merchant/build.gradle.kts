@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -46,6 +48,9 @@ dependencies {
     implementation(project(":aidl_contract"))
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+
+    implementation(libs.androidx.dagger.hilt)
+    ksp(libs.androidx.hilt.compiler)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
