@@ -3,7 +3,7 @@ package info.alihabibi.payment_core.data.entity
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import info.alihabibi.payment_core.data.TransactionStatus
+import info.alihabibi.payment_core.domain.model.TransactionStatus
 
 @Entity(
     tableName = "transactions",
@@ -11,9 +11,9 @@ import info.alihabibi.payment_core.data.TransactionStatus
         Index(value = ["requestId"], unique = true)
     ]
 )
-data class Transactions(
+data class TransactionsEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
-    val requestId: Long,
+    val requestId: String,
     val amount: Long,
     val terminalId: String,
     val traceNumber: Long,

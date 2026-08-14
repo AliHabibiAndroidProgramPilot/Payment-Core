@@ -1,4 +1,4 @@
-package info.alihabibi.payment_core.data
+package info.alihabibi.payment_core.domain.model
 
 enum class TransactionStatus {
 

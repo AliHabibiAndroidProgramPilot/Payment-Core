@@ -5,9 +5,10 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import info.alihabibi.payment_core.data.converter.TransactionStatusConverter
 import info.alihabibi.payment_core.data.dao.TransactionDao
+import info.alihabibi.payment_core.data.entity.TransactionsEntity
 
 @Database(
-    entities = [TransactionDao::class],
+    entities = [TransactionsEntity::class],
     version = 1,
     exportSchema = false
 )
