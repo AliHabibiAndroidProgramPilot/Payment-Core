@@ -10,7 +10,7 @@ import info.alihabibi.payment_core.data.entity.TransactionsEntity
 @Dao
 interface TransactionDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertTransaction(transaction: TransactionsEntity): Long
 
     @Query("SELECT * FROM transactions WHERE requestId = :requestId")
