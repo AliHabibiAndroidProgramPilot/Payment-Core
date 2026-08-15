@@ -10,6 +10,7 @@ import info.alihabibi.aidl_contract.PaymentRequest
 import info.alihabibi.aidl_contract.PaymentResult
 import info.alihabibi.merchant.payment.PaymentEvent
 import info.alihabibi.merchant.repository.PaymentRepository
+import info.alihabibi.merchant.sharedpref.TraceNumberPrefRepository
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,20 +20,22 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    private val repository: PaymentRepository
+    private val repository: PaymentRepository,
+    private val traceNumberPref: TraceNumberPrefRepository
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<MainScreenUiState> = MutableStateFlow(MainScreenUiState.Idle)
     val uiState: StateFlow<MainScreenUiState> = _uiState.asStateFlow()
 
-    var requestId by mutableStateOf("01")
-    var amount by mutableStateOf("500000")
-    var terminalId by mutableStateOf("01")
-    var traceNumber by mutableStateOf("01")
-    var keepServiceAlive by mutableStateOf(true)
+    var requestId by mutableStateOf("")
+    var amount by mutableStateOf("")
+    var terminalId by mutableStateOf("")
+    var traceNumber by mutableStateOf(traceNumberPref.getLatestTraceNumber().toString())
+    var keepServiceAlive by mutableStateOf(false)
     var transactionStatus by mutableStateOf("")
 
     fun startTransaction() {
+        saveNewTraceNumber()
         val request = PaymentRequest(
             requestId = requestId,
             amount = amount.toLongOrNull() ?: 0,
@@ -81,6 +84,12 @@ class MainScreenViewModel @Inject constructor(
 
     fun changeKeepServiceAlive(value: Boolean) {
         keepServiceAlive = value
+    }
+
+    private fun saveNewTraceNumber() {
+        val newTraceNumber = this.traceNumber.toInt() + 1
+        traceNumberPref.saveTraceNumber(newTraceNumber)
+        this.traceNumber = newTraceNumber.toString()
     }
 
 }
