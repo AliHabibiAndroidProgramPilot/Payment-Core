@@ -35,20 +35,21 @@ class MainScreenViewModel @Inject constructor(
     fun startTransaction() {
         val request = PaymentRequest(
             requestId = requestId,
-            amount = amount.toLong(),
+            amount = amount.toLongOrNull() ?: 0,
             terminalId = terminalId,
-            traceNumber = traceNumber.toLong(),
+            traceNumber = traceNumber.toLongOrNull() ?: 0,
             keepServiceAlive = keepServiceAlive
         )
-        _uiState.value = MainScreenUiState.InProgress("Starting…")
         viewModelScope.launch {
             repository.startTransaction(request)
-                .catch { e -> _uiState.value = MainScreenUiState.Error(e.message ?: "Connection error") }
+                .catch { e ->
+                    _uiState.value = MainScreenUiState.Error(e.message ?: "exception happened")
+                }
                 .collect { event ->
                     _uiState.value = when (event) {
                         is PaymentEvent.Started -> MainScreenUiState.InProgress("Started")
                         is PaymentEvent.Progress -> MainScreenUiState.InProgress(event.status)
-                        is PaymentEvent.Completed -> MainScreenUiState.Success(event.result)
+                        is PaymentEvent.Completed -> MainScreenUiState.Completed(event.result)
                         is PaymentEvent.Failed -> MainScreenUiState.Failed(event.result)
                     }
                 }
@@ -87,7 +88,7 @@ class MainScreenViewModel @Inject constructor(
 sealed interface MainScreenUiState {
     data object Idle : MainScreenUiState
     data class InProgress(val status: String) : MainScreenUiState
-    data class Success(val result: PaymentResult) : MainScreenUiState
+    data class Completed(val result: PaymentResult) : MainScreenUiState
     data class Failed(val result: PaymentResult) : MainScreenUiState
     data class Error(val message: String) : MainScreenUiState
 }

@@ -105,8 +105,8 @@ fun MainScreen() {
 
         when (val state = uiState) {
             is MainScreenUiState.Idle -> Text("No Transaction", fontSize = 22.sp)
-            is MainScreenUiState.InProgress -> Text("In progress: ${state.status}", fontSize = 22.sp)
-            is MainScreenUiState.Success -> Text("Success: ${state.result}", fontSize = 22.sp)
+            is MainScreenUiState.InProgress -> Text("In Progress: ${state.status}", fontSize = 22.sp)
+            is MainScreenUiState.Completed -> Text("Success: ${state.result}", fontSize = 22.sp)
             is MainScreenUiState.Failed -> Text("Failed: ${state.result}", fontSize = 22.sp)
             is MainScreenUiState.Error -> Text("Error: ${state.message}", fontSize = 22.sp)
         }

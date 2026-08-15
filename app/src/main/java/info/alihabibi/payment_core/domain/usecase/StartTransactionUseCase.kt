@@ -20,8 +20,10 @@ class StartTransactionUseCase @Inject constructor(
 
     operator fun invoke(transactionRequest: PaymentRequest): Flow<TransactionStateEvent> = flow {
         val startedAt = System.currentTimeMillis()
-        require(transactionRequest.amount > 0) { "Amount must be grater than 0" }
         require(transactionRequest.requestId.isNotBlank()) { "Request id is invalid" }
+        require(transactionRequest.terminalId.isNotBlank()) { "Terminal Id is invalid" }
+        require(transactionRequest.amount > 0) { "Amount must be grater than 0" }
+        require(transactionRequest.traceNumber > 0) { "Trace number must be grater than 0" }
         emit(TransactionStateEvent.StateChanged(TransactionStatus.RECEIVED))
         delay(2000)
 

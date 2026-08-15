@@ -4,7 +4,6 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import info.alihabibi.payment_core.R
@@ -25,14 +24,13 @@ class NotificationHelper @Inject constructor(
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     init {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            createChannelIfNeeded()
+        createChannel()
     }
 
-    private fun createChannelIfNeeded() {
+    private fun createChannel() {
         val channel = NotificationChannel(
             CHANNEL_ID,
-            "Payment Processing",
+            "Payment processing",
             NotificationManager.IMPORTANCE_LOW
         ).apply {
             setShowBadge(false)
