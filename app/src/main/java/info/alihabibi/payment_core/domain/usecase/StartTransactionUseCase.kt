@@ -7,6 +7,7 @@ import info.alihabibi.payment_core.domain.TransactionStateEvent
 import info.alihabibi.payment_core.domain.model.Transaction
 import info.alihabibi.payment_core.domain.model.TransactionStatus
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -22,6 +23,7 @@ class StartTransactionUseCase @Inject constructor(
         require(transactionRequest.amount > 0) { "Amount must be grater than 0" }
         require(transactionRequest.requestId.isNotBlank()) { "Request id is invalid" }
         emit(TransactionStateEvent.StateChanged(TransactionStatus.RECEIVED))
+        delay(2000)
 
         val insertId = transactionRepository.insertTransaction(
             Transaction(
@@ -45,6 +47,7 @@ class StartTransactionUseCase @Inject constructor(
                 System.currentTimeMillis()
             )
             emit(TransactionStateEvent.StateChanged(TransactionStatus.STORED))
+            delay(2000)
         }
         transactionRepository.updateTransactionStatus(
             transactionRequest.requestId,
@@ -52,6 +55,7 @@ class StartTransactionUseCase @Inject constructor(
             System.currentTimeMillis()
         )
         emit(TransactionStateEvent.StateChanged(TransactionStatus.PROCESSING))
+        delay(2000)
 
         transactionRepository.updateTransactionStatus(
             transactionRequest.requestId,
@@ -59,6 +63,7 @@ class StartTransactionUseCase @Inject constructor(
             System.currentTimeMillis()
         )
         emit(TransactionStateEvent.StateChanged(TransactionStatus.CONNECTING))
+        delay(2000)
         //tcp client connect
 
         transactionRepository.updateTransactionStatus(
@@ -67,6 +72,7 @@ class StartTransactionUseCase @Inject constructor(
             System.currentTimeMillis()
         )
         emit(TransactionStateEvent.StateChanged(TransactionStatus.SENDING))
+        delay(2000)
         //tcp client send
 
         transactionRepository.updateTransactionStatus(
@@ -75,6 +81,7 @@ class StartTransactionUseCase @Inject constructor(
             System.currentTimeMillis()
         )
         emit(TransactionStateEvent.StateChanged(TransactionStatus.WAITING_RESPONSE))
+        delay(2000)
         //tcp client get
 
         val durationMs = System.currentTimeMillis() - startedAt
@@ -91,6 +98,7 @@ class StartTransactionUseCase @Inject constructor(
                 durationMs = durationMs
             )
         ))
+        delay(2000)
         // else
         transactionRepository.markTransactionFailed(transactionRequest.requestId, System.currentTimeMillis())
         emit(TransactionStateEvent.Failure(

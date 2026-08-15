@@ -15,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -87,6 +89,19 @@ fun MainScreen() {
         Button(onClick = { viewModel.startTransaction() }) { Text("Start Transaction") }
 
         Spacer(modifier = Modifier.height(10.dp))
+
+        Button(onClick = { viewModel.getTransactionStatus() }) { Text("Get Transaction") }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        if (viewModel.transactionStatus.isNotEmpty()) {
+            Text(
+                text = viewModel.transactionStatus,
+                color = Color.Green,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center
+            )
+        }
 
         when (val state = uiState) {
             is MainScreenUiState.Idle -> Text("No Transaction", fontSize = 22.sp)

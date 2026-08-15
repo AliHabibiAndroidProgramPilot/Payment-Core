@@ -25,11 +25,12 @@ class MainScreenViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<MainScreenUiState> = MutableStateFlow(MainScreenUiState.Idle)
     val uiState: StateFlow<MainScreenUiState> = _uiState.asStateFlow()
 
-    var requestId by mutableStateOf("")
-    var amount by mutableStateOf("")
-    var terminalId by mutableStateOf("")
-    var traceNumber by mutableStateOf("")
-    var keepServiceAlive by mutableStateOf(false)
+    var requestId by mutableStateOf("01")
+    var amount by mutableStateOf("500000")
+    var terminalId by mutableStateOf("01")
+    var traceNumber by mutableStateOf("01")
+    var keepServiceAlive by mutableStateOf(true)
+    var transactionStatus by mutableStateOf("")
 
     fun startTransaction() {
         val request = PaymentRequest(
@@ -51,6 +52,13 @@ class MainScreenViewModel @Inject constructor(
                         is PaymentEvent.Failed -> MainScreenUiState.Failed(event.result)
                     }
                 }
+        }
+    }
+
+    fun getTransactionStatus() {
+        viewModelScope.launch {
+            val transaction = repository.getTransactionStatus(requestId)
+            transactionStatus = transaction.toString()
         }
     }
 
