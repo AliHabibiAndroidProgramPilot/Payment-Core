@@ -79,12 +79,12 @@ class PaymentCoreConnector @Inject constructor(
 
             override fun onTransactionComplete(result: PaymentResult) {
                 trySend(PaymentEvent.Completed(result))
-                Log.i("Ali", "Transaction Success: ${result.toString()}")
+                Log.i("Ali", "Transaction Success: $result")
             }
 
             override fun onTransactionFailed(result: PaymentResult) {
                 trySend(PaymentEvent.Failed(result))
-                Log.i("Ali", "Transaction Failed: ${result.toString()}")
+                Log.i("Ali", "Transaction Failed: $result")
             }
 
         }
