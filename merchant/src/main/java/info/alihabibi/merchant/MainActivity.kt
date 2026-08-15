@@ -3,9 +3,11 @@ package info.alihabibi.merchant
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import info.alihabibi.merchant.ui.theme.PaymentCoreTheme
+import dagger.hilt.android.AndroidEntryPoint
 import info.alihabibi.merchant.ui.screens.MainScreen
+import info.alihabibi.merchant.ui.theme.PaymentCoreTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

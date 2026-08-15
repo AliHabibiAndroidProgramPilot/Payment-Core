@@ -37,6 +37,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
+        freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
     }
     buildFeatures {
         compose = true
@@ -47,9 +48,10 @@ dependencies {
 
     implementation(project(":aidl_contract"))
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
 
     implementation(libs.androidx.dagger.hilt)
+    implementation(libs.androidx.lifecycle.process)
     ksp(libs.androidx.hilt.compiler)
 
     implementation(libs.androidx.core.ktx)

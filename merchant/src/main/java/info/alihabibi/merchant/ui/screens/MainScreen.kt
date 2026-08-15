@@ -16,13 +16,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun MainScreen() {
 
-    val viewModel: MainScreenViewModel = viewModel<MainScreenViewModel>()
+    val viewModel: MainScreenViewModel = hiltViewModel<MainScreenViewModel>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(
@@ -32,8 +33,8 @@ fun MainScreen() {
     ) {
 
         TextField(
-            value = uiState.requestId,
-            onValueChange = { viewModel.changeValues(UiEvent.OnChangeRequestId(it)) },
+            value = viewModel.requestId,
+            onValueChange = { viewModel.changeRequestId(it) },
             label = { Text("Request Id") },
             singleLine = true
         )
@@ -41,8 +42,8 @@ fun MainScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
-            value = uiState.amount,
-            onValueChange = { viewModel.changeValues(UiEvent.OnChangeAmount(it)) },
+            value = viewModel.amount,
+            onValueChange = { viewModel.changeAmount(it) },
             label = { Text("Amount") },
             singleLine = true
         )
@@ -50,8 +51,8 @@ fun MainScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
-            value = uiState.terminalId,
-            onValueChange = { viewModel.changeValues(UiEvent.OnChangeTerminalId(it)) },
+            value = viewModel.terminalId,
+            onValueChange = { viewModel.changeTerminalId(it) },
             label = { Text("Terminal Id") },
             singleLine = true
         )
@@ -59,8 +60,8 @@ fun MainScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
-            value = uiState.traceNumber,
-            onValueChange = { viewModel.changeValues(UiEvent.OnChangeTraceNumber(it)) },
+            value = viewModel.traceNumber,
+            onValueChange = { viewModel.changeTraceNumber(it) },
             label = { Text("Trace Number") },
             singleLine = true
         )
@@ -75,8 +76,8 @@ fun MainScreen() {
 
             Checkbox(
                 modifier = Modifier.padding(12.dp),
-                checked = uiState.keepServiceAlive,
-                onCheckedChange = { viewModel.changeValues(UiEvent.OnChangeKeepServiceAlive(it)) }
+                checked = viewModel.keepServiceAlive,
+                onCheckedChange = { viewModel.changeKeepServiceAlive(it) }
             )
 
         }
@@ -84,6 +85,16 @@ fun MainScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = { viewModel.startTransaction() }) { Text("Start Transaction") }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        when (val state = uiState) {
+            is MainScreenUiState.Idle -> Text("No Transaction", fontSize = 22.sp)
+            is MainScreenUiState.InProgress -> Text("In progress: ${state.status}", fontSize = 22.sp)
+            is MainScreenUiState.Success -> Text("Success: ${state.result}", fontSize = 22.sp)
+            is MainScreenUiState.Failed -> Text("Failed: ${state.result}", fontSize = 22.sp)
+            is MainScreenUiState.Error -> Text("Error: ${state.message}", fontSize = 22.sp)
+        }
 
     }
 
