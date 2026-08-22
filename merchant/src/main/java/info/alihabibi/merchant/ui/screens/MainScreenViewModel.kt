@@ -10,29 +10,34 @@ import info.alihabibi.aidl_contract.PaymentRequest
 import info.alihabibi.aidl_contract.PaymentResult
 import info.alihabibi.merchant.payment.PaymentEvent
 import info.alihabibi.merchant.repository.PaymentRepository
+import info.alihabibi.merchant.sharedpref.TraceNumberPrefRepository
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    private val repository: PaymentRepository
+    private val repository: PaymentRepository,
+    private val traceNumberPref: TraceNumberPrefRepository
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<MainScreenUiState> = MutableStateFlow(MainScreenUiState.Idle)
     val uiState: StateFlow<MainScreenUiState> = _uiState.asStateFlow()
 
-    var requestId by mutableStateOf("01")
-    var amount by mutableStateOf("500000")
-    var terminalId by mutableStateOf("01")
-    var traceNumber by mutableStateOf("01")
-    var keepServiceAlive by mutableStateOf(true)
-    var transactionStatus by mutableStateOf("")
+    var requestId by mutableStateOf("")
+    var amount by mutableStateOf("")
+    var terminalId by mutableStateOf("")
+    var traceNumber by mutableStateOf(traceNumberPref.getLatestTraceNumber().toString())
+    var keepServiceAlive by mutableStateOf(false)
+    var transactionStatus: PaymentResult? by mutableStateOf(null)
 
     fun startTransaction() {
+        saveNewTraceNumber()
+        transactionStatus = null
         val request = PaymentRequest(
             requestId = requestId,
             amount = amount.toLongOrNull() ?: 0,
@@ -58,8 +63,9 @@ class MainScreenViewModel @Inject constructor(
 
     fun getTransactionStatus() {
         viewModelScope.launch {
+            _uiState.update { MainScreenUiState.Idle }
             val transaction = repository.getTransactionStatus(requestId)
-            transactionStatus = transaction.toString()
+            transactionStatus = transaction
         }
     }
 
@@ -81,6 +87,12 @@ class MainScreenViewModel @Inject constructor(
 
     fun changeKeepServiceAlive(value: Boolean) {
         keepServiceAlive = value
+    }
+
+    private fun saveNewTraceNumber() {
+        val newTraceNumber = this.traceNumber.toInt() + 1
+        traceNumberPref.saveTraceNumber(newTraceNumber)
+        this.traceNumber = newTraceNumber.toString()
     }
 
 }

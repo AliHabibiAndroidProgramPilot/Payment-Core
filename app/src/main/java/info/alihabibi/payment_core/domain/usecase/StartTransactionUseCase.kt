@@ -24,6 +24,10 @@ class StartTransactionUseCase @Inject constructor(
         require(transactionRequest.terminalId.isNotBlank()) { "Terminal Id is invalid" }
         require(transactionRequest.amount > 0) { "Amount must be grater than 0" }
         require(transactionRequest.traceNumber > 0) { "Trace number must be grater than 0" }
+
+        val isDuplicatedRequestId = transactionRepository.getTransactionByRequestId(transactionRequest.requestId)
+        require(isDuplicatedRequestId == null) { "Request Id is duplicated!" }
+
         emit(TransactionStateEvent.StateChanged(TransactionStatus.RECEIVED))
         delay(2000)
 
@@ -42,15 +46,28 @@ class StartTransactionUseCase @Inject constructor(
                 keepServiceAlive = transactionRequest.keepServiceAlive
             )
         )
-        if (insertId > 0) {
-            transactionRepository.updateTransactionStatus(
-                transactionRequest.requestId,
-                TransactionStatus.STORED,
-                System.currentTimeMillis()
-            )
-            emit(TransactionStateEvent.StateChanged(TransactionStatus.STORED))
-            delay(2000)
+        if (insertId < 0L) {
+            emit(TransactionStateEvent.Failure(
+                PaymentResult(
+                    requestId = transactionRequest.requestId,
+                    status = TransactionStatus.FAILED.name,
+                    responseCode = "12",
+                    rrn = null,
+                    message = "Transaction failed to be stored",
+                    durationMs = 0L
+                )
+            ))
+            return@flow
         }
+
+        transactionRepository.updateTransactionStatus(
+            transactionRequest.requestId,
+            TransactionStatus.STORED,
+            System.currentTimeMillis()
+        )
+        emit(TransactionStateEvent.StateChanged(TransactionStatus.STORED))
+        delay(2000)
+
         transactionRepository.updateTransactionStatus(
             transactionRequest.requestId,
             TransactionStatus.PROCESSING,
@@ -115,7 +132,6 @@ class StartTransactionUseCase @Inject constructor(
         ))
     }
         .catch { e ->
-            transactionRepository.markTransactionFailed(transactionRequest.requestId, System.currentTimeMillis())
             emit(TransactionStateEvent.Failure(
                 PaymentResult(
                     requestId = transactionRequest.requestId,
