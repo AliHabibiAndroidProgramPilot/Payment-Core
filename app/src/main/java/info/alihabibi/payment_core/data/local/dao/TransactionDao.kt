@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import info.alihabibi.payment_core.domain.model.TransactionStatus
+import info.alihabibi.payment_core.domain.model.local.TransactionStatus
 import info.alihabibi.payment_core.data.local.entity.TransactionsEntity
 
 @Dao

@@ -1,7 +1,7 @@
 package info.alihabibi.payment_core.data.local.converter
 
 import androidx.room.TypeConverter
-import info.alihabibi.payment_core.domain.model.TransactionStatus
+import info.alihabibi.payment_core.domain.model.local.TransactionStatus
 import java.lang.IllegalArgumentException
 
 class TransactionStatusConverter {

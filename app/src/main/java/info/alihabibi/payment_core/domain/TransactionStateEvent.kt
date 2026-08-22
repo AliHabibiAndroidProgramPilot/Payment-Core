@@ -1,7 +1,7 @@
 package info.alihabibi.payment_core.domain
 
 import info.alihabibi.aidl_contract.PaymentResult
-import info.alihabibi.payment_core.domain.model.TransactionStatus
+import info.alihabibi.payment_core.domain.model.local.TransactionStatus
 
 sealed interface TransactionStateEvent {
     data class StateChanged(val state: TransactionStatus) : TransactionStateEvent

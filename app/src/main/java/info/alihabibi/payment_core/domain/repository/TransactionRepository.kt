@@ -1,7 +1,7 @@
-package info.alihabibi.payment_core.domain
+package info.alihabibi.payment_core.domain.repository
 
-import info.alihabibi.payment_core.domain.model.Transaction
-import info.alihabibi.payment_core.domain.model.TransactionStatus
+import info.alihabibi.payment_core.domain.model.local.Transaction
+import info.alihabibi.payment_core.domain.model.local.TransactionStatus
 
 interface TransactionRepository {
 

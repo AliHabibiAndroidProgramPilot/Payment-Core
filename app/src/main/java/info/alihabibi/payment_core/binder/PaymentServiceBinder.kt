@@ -7,7 +7,7 @@ import info.alihabibi.aidl_contract.IPaymentService
 import info.alihabibi.aidl_contract.PaymentRequest
 import info.alihabibi.aidl_contract.PaymentResult
 import info.alihabibi.payment_core.domain.TransactionStateEvent
-import info.alihabibi.payment_core.domain.model.TransactionStatus
+import info.alihabibi.payment_core.domain.model.local.TransactionStatus
 import info.alihabibi.payment_core.domain.usecase.GetTransactionUseCase
 import info.alihabibi.payment_core.domain.usecase.StartTransactionUseCase
 import jakarta.inject.Inject
