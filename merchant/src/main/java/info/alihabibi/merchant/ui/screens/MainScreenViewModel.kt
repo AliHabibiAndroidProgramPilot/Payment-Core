@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -32,10 +33,11 @@ class MainScreenViewModel @Inject constructor(
     var terminalId by mutableStateOf("")
     var traceNumber by mutableStateOf(traceNumberPref.getLatestTraceNumber().toString())
     var keepServiceAlive by mutableStateOf(false)
-    var transactionStatus by mutableStateOf("")
+    var transactionStatus: PaymentResult? by mutableStateOf(null)
 
     fun startTransaction() {
         saveNewTraceNumber()
+        transactionStatus = null
         val request = PaymentRequest(
             requestId = requestId,
             amount = amount.toLongOrNull() ?: 0,
@@ -61,8 +63,9 @@ class MainScreenViewModel @Inject constructor(
 
     fun getTransactionStatus() {
         viewModelScope.launch {
+            _uiState.update { MainScreenUiState.Idle }
             val transaction = repository.getTransactionStatus(requestId)
-            transactionStatus = transaction.toString()
+            transactionStatus = transaction
         }
     }
 
