@@ -1,6 +1,6 @@
 package info.alihabibi.payment_core.domain.mapper
 
-import info.alihabibi.payment_core.data.entity.TransactionsEntity
+import info.alihabibi.payment_core.data.local.entity.TransactionsEntity
 import info.alihabibi.payment_core.domain.model.Transaction
 
 fun TransactionsEntity?.toDomainOrNull(): Transaction? {

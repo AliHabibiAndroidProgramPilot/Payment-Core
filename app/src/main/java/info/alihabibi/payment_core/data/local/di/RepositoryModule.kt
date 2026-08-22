@@ -1,10 +1,10 @@
-package info.alihabibi.payment_core.data.di
+package info.alihabibi.payment_core.data.local.di
 
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import info.alihabibi.payment_core.data.TransactionRepositoryImpl
+import info.alihabibi.payment_core.data.local.TransactionRepositoryImpl
 import info.alihabibi.payment_core.domain.TransactionRepository
 import javax.inject.Singleton
 

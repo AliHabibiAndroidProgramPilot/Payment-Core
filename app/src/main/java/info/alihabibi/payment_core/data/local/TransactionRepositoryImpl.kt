@@ -1,6 +1,6 @@
-package info.alihabibi.payment_core.data
+package info.alihabibi.payment_core.data.local
 
-import info.alihabibi.payment_core.data.dao.TransactionDao
+import info.alihabibi.payment_core.data.local.dao.TransactionDao
 import info.alihabibi.payment_core.domain.TransactionRepository
 import info.alihabibi.payment_core.domain.mapper.toDomainOrNull
 import info.alihabibi.payment_core.domain.mapper.toEntity

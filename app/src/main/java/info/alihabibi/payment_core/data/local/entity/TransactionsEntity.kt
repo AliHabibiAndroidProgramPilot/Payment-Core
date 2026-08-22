@@ -1,4 +1,4 @@
-package info.alihabibi.payment_core.data.entity
+package info.alihabibi.payment_core.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.Index

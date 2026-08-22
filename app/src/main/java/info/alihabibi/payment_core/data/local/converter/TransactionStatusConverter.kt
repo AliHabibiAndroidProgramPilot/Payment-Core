@@ -1,4 +1,4 @@
-package info.alihabibi.payment_core.data.converter
+package info.alihabibi.payment_core.data.local.converter
 
 import androidx.room.TypeConverter
 import info.alihabibi.payment_core.domain.model.TransactionStatus
