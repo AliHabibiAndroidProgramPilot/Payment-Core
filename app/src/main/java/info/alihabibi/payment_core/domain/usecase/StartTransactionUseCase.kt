@@ -2,12 +2,13 @@ package info.alihabibi.payment_core.domain.usecase
 
 import info.alihabibi.aidl_contract.PaymentRequest
 import info.alihabibi.aidl_contract.PaymentResult
-import info.alihabibi.payment_core.domain.TransactionRepository
 import info.alihabibi.payment_core.domain.TransactionStateEvent
-import info.alihabibi.payment_core.domain.model.Transaction
-import info.alihabibi.payment_core.domain.model.TransactionStatus
+import info.alihabibi.payment_core.domain.model.local.Transaction
+import info.alihabibi.payment_core.domain.model.local.TransactionStatus
+import info.alihabibi.payment_core.domain.model.remote.GatewayRequest
+import info.alihabibi.payment_core.domain.repository.PaymentGatewayRepository
+import info.alihabibi.payment_core.domain.repository.TransactionRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -15,7 +16,8 @@ import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class StartTransactionUseCase @Inject constructor(
-    private val transactionRepository: TransactionRepository
+    private val transactionRepository: TransactionRepository,
+    private val paymentGatewayRepository: PaymentGatewayRepository
 ) {
 
     operator fun invoke(transactionRequest: PaymentRequest): Flow<TransactionStateEvent> = flow {
@@ -29,7 +31,6 @@ class StartTransactionUseCase @Inject constructor(
         require(isDuplicatedRequestId == null) { "Request Id is duplicated!" }
 
         emit(TransactionStateEvent.StateChanged(TransactionStatus.RECEIVED))
-        delay(2000)
 
         val insertId = transactionRepository.insertTransaction(
             Transaction(
@@ -51,7 +52,7 @@ class StartTransactionUseCase @Inject constructor(
                 PaymentResult(
                     requestId = transactionRequest.requestId,
                     status = TransactionStatus.FAILED.name,
-                    responseCode = "12",
+                    responseCode = "03",
                     rrn = null,
                     message = "Transaction failed to be stored",
                     durationMs = 0L
@@ -66,7 +67,6 @@ class StartTransactionUseCase @Inject constructor(
             System.currentTimeMillis()
         )
         emit(TransactionStateEvent.StateChanged(TransactionStatus.STORED))
-        delay(2000)
 
         transactionRepository.updateTransactionStatus(
             transactionRequest.requestId,
@@ -74,7 +74,6 @@ class StartTransactionUseCase @Inject constructor(
             System.currentTimeMillis()
         )
         emit(TransactionStateEvent.StateChanged(TransactionStatus.PROCESSING))
-        delay(2000)
 
         transactionRepository.updateTransactionStatus(
             transactionRequest.requestId,
@@ -82,61 +81,67 @@ class StartTransactionUseCase @Inject constructor(
             System.currentTimeMillis()
         )
         emit(TransactionStateEvent.StateChanged(TransactionStatus.CONNECTING))
-        delay(2000)
-        //tcp client connect
+        val tcpConnection = paymentGatewayRepository.connect()
 
-        transactionRepository.updateTransactionStatus(
-            transactionRequest.requestId,
-            TransactionStatus.SENDING,
-            System.currentTimeMillis()
-        )
-        emit(TransactionStateEvent.StateChanged(TransactionStatus.SENDING))
-        delay(2000)
-        //tcp client send
+        val tcpResponse = try {
+            transactionRepository.updateTransactionStatus(
+                transactionRequest.requestId,
+                TransactionStatus.SENDING,
+                System.currentTimeMillis()
+            )
+            emit(TransactionStateEvent.StateChanged(TransactionStatus.SENDING))
+            tcpConnection.send(
+                GatewayRequest(
+                    requestId = transactionRequest.requestId,
+                    amount = transactionRequest.amount,
+                    terminalId = transactionRequest.terminalId,
+                    traceNumber = transactionRequest.traceNumber
+                )
+            )
 
-        transactionRepository.updateTransactionStatus(
-            transactionRequest.requestId,
-            TransactionStatus.WAITING_RESPONSE,
-            System.currentTimeMillis()
-        )
-        emit(TransactionStateEvent.StateChanged(TransactionStatus.WAITING_RESPONSE))
-        delay(2000)
-        //tcp client get
+            transactionRepository.updateTransactionStatus(
+                transactionRequest.requestId,
+                TransactionStatus.WAITING_RESPONSE,
+                System.currentTimeMillis()
+            )
+            emit(TransactionStateEvent.StateChanged(TransactionStatus.WAITING_RESPONSE))
+            tcpConnection.receive(transactionRequest.requestId)
+        } finally {
+            tcpConnection.close()
+        }
 
         val durationMs = System.currentTimeMillis() - startedAt
-
-        //if(tcpClient.responseCode == TCPResponseCodes.SUCCESS)
-        transactionRepository.markTransactionSuccess(transactionRequest.requestId, System.currentTimeMillis())
-        emit(TransactionStateEvent.Success(
-            PaymentResult(
-                requestId = transactionRequest.requestId,
+        if (tcpResponse.responseCode == "00") {
+            transactionRepository.markTransactionSuccess(transactionRequest.requestId, System.currentTimeMillis())
+            emit(TransactionStateEvent.Success(PaymentResult(
+                requestId = tcpResponse.requestId,
                 status = TransactionStatus.SUCCESS.name,
-                responseCode = "00",
-                rrn = null,
-                message = "null",
+                responseCode = tcpResponse.responseCode,
+                rrn = tcpResponse.rrn,
+                message = tcpResponse.message,
                 durationMs = durationMs
+            ))
             )
-        ))
-        delay(2000)
-        // else
-        transactionRepository.markTransactionFailed(transactionRequest.requestId, System.currentTimeMillis())
-        emit(TransactionStateEvent.Failure(
-            PaymentResult(
-                requestId = transactionRequest.requestId,
-                status = TransactionStatus.FAILED.name,
-                responseCode = "12",
-                rrn = null,
-                message = null,
-                durationMs = durationMs
-            )
-        ))
+        } else {
+            transactionRepository.markTransactionFailed(transactionRequest.requestId, System.currentTimeMillis())
+            emit(TransactionStateEvent.Failure(
+                PaymentResult(
+                    requestId = tcpResponse.requestId,
+                    status = TransactionStatus.FAILED.name,
+                    responseCode = tcpResponse.responseCode,
+                    rrn = tcpResponse.rrn,
+                    message = tcpResponse.message,
+                    durationMs = durationMs
+                )
+            ))
+        }
     }
         .catch { e ->
             emit(TransactionStateEvent.Failure(
                 PaymentResult(
                     requestId = transactionRequest.requestId,
-                    status = TransactionStatus.FAILED.name,
-                    responseCode = "12",
+                    status = TransactionStatus.CANCELLED.name,
+                    responseCode = null,
                     rrn = null,
                     message = e.message,
                     durationMs = 0

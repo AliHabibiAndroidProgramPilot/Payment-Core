@@ -1,4 +1,4 @@
-package info.alihabibi.payment_core.domain.model
+package info.alihabibi.payment_core.domain.model.local
 
 data class Transaction(
     val id: Long = 0,

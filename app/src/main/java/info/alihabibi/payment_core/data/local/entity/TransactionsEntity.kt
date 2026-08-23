@@ -1,9 +1,9 @@
-package info.alihabibi.payment_core.data.entity
+package info.alihabibi.payment_core.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import info.alihabibi.payment_core.domain.model.TransactionStatus
+import info.alihabibi.payment_core.domain.model.local.TransactionStatus
 
 @Entity(
     tableName = "transactions",

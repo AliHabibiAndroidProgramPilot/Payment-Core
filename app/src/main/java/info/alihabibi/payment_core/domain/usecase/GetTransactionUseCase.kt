@@ -1,8 +1,8 @@
 package info.alihabibi.payment_core.domain.usecase
 
 import info.alihabibi.aidl_contract.PaymentResult
-import info.alihabibi.payment_core.domain.TransactionRepository
-import info.alihabibi.payment_core.domain.model.TransactionStatus
+import info.alihabibi.payment_core.domain.repository.TransactionRepository
+import info.alihabibi.payment_core.domain.model.local.TransactionStatus
 import javax.inject.Inject
 
 class GetTransactionUseCase @Inject constructor(

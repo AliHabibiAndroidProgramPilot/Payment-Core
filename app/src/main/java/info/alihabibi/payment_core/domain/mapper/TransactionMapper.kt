@@ -1,7 +1,7 @@
 package info.alihabibi.payment_core.domain.mapper
 
-import info.alihabibi.payment_core.data.entity.TransactionsEntity
-import info.alihabibi.payment_core.domain.model.Transaction
+import info.alihabibi.payment_core.data.local.entity.TransactionsEntity
+import info.alihabibi.payment_core.domain.model.local.Transaction
 
 fun TransactionsEntity?.toDomainOrNull(): Transaction? {
     if (this == null) return null

@@ -1,11 +1,11 @@
-package info.alihabibi.payment_core.data
+package info.alihabibi.payment_core.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import info.alihabibi.payment_core.data.converter.TransactionStatusConverter
-import info.alihabibi.payment_core.data.dao.TransactionDao
-import info.alihabibi.payment_core.data.entity.TransactionsEntity
+import info.alihabibi.payment_core.data.local.converter.TransactionStatusConverter
+import info.alihabibi.payment_core.data.local.dao.TransactionDao
+import info.alihabibi.payment_core.data.local.entity.TransactionsEntity
 
 @Database(
     entities = [TransactionsEntity::class],
