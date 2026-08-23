@@ -1,6 +1,6 @@
 package info.alihabibi.payment_core.data.remote
 
-import info.alihabibi.payment_core.domain.GatewayConnection
+import info.alihabibi.payment_core.domain.TcpConnection
 import info.alihabibi.payment_core.domain.GatewayException
 import info.alihabibi.payment_core.domain.model.remote.GatewayRequest
 import info.alihabibi.payment_core.domain.model.remote.GatewayResponse
@@ -13,7 +13,7 @@ import java.io.PrintWriter
 import java.net.Socket
 import java.net.SocketTimeoutException
 
-class TcpConnection(private val socket: Socket) : GatewayConnection {
+class TcpConnectionImpl(private val socket: Socket) : TcpConnection {
 
     override suspend fun send(request: GatewayRequest) {
         try {

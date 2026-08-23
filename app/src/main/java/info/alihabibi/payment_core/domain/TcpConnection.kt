@@ -3,7 +3,7 @@ package info.alihabibi.payment_core.domain
 import info.alihabibi.payment_core.domain.model.remote.GatewayRequest
 import info.alihabibi.payment_core.domain.model.remote.GatewayResponse
 
-interface GatewayConnection {
+interface TcpConnection {
 
     suspend fun send(request: GatewayRequest)
 

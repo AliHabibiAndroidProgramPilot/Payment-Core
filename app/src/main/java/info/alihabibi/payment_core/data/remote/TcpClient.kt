@@ -18,12 +18,12 @@ class TcpClient @Inject constructor() {
         private const val READ_TIMEOUT = 10_000
     }
 
-    suspend fun openConnection(): TcpConnection = withContext(Dispatchers.IO) {
+    suspend fun openConnection(): TcpConnectionImpl = withContext(Dispatchers.IO) {
         val socket = Socket()
         try {
             socket.connect(InetSocketAddress(HOST, PORT), CONNECTION_TIMEOUT)
             socket.soTimeout = READ_TIMEOUT
-            TcpConnection(socket)
+            TcpConnectionImpl(socket)
         } catch (e: SocketTimeoutException) {
             runCatching { socket.close() }
             throw GatewayException.ConnectionTimeout(e)
