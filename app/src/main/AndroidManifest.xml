@@ -3,6 +3,9 @@
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <permission
         android:name="info.alihabibi.payment_core.BIND_PAYMENT_PERMISSION"
         android:protectionLevel="signature" />
