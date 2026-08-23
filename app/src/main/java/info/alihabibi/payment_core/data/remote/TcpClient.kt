@@ -12,7 +12,7 @@ import javax.inject.Inject
 class TcpClient @Inject constructor() {
 
     companion object {
-        private const val HOST = "192.168.255.186" //Hardcoded for my real android device, change it for you test
+        private const val HOST = "192.168.1.6" //Hardcoded for my real android device, change it for you test
         private const val PORT = 9999
         private const val CONNECTION_TIMEOUT = 5_000
         private const val READ_TIMEOUT = 10_000
